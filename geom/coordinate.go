@@ -1,4 +1,4 @@
-package main
+package geom
 
 type Coordinate struct {
 	lat float32
