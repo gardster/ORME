@@ -6,26 +6,26 @@ type Coordinate struct {
 }
 
 type BBox struct {
-	mincoord Coordinate
-	maxcoord Coordinate
+	min Coordinate
+	max Coordinate
 }
 
 func CalculateBBox(coords []Coordinate) BBox {
-	mincoord := coords[0]
-	maxcoord := coords[0]
+	minCoord := coords[0]
+	maxCoord := coords[0]
 	for _, v := range coords {
-		if v.lat < mincoord.lat {
-			mincoord.lat = v.lat
+		if v.lat < minCoord.lat {
+			minCoord.lat = v.lat
 		}
-		if v.lon < mincoord.lon {
-			mincoord.lon = v.lon
+		if v.lon < minCoord.lon {
+			minCoord.lon = v.lon
 		}
-		if v.lat > maxcoord.lat {
-			maxcoord.lat = v.lat
+		if v.lat > maxCoord.lat {
+			maxCoord.lat = v.lat
 		}
-		if v.lon > maxcoord.lon {
-			maxcoord.lon = v.lon
+		if v.lon > maxCoord.lon {
+			maxCoord.lon = v.lon
 		}
 	}
-	return BBox{mincoord, maxcoord}
+	return BBox{minCoord, maxCoord}
 }

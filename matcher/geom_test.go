@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -16,10 +17,10 @@ func TestCoordinateCreation(t *testing.T) {
 
 func TestCalculateBBox(t *testing.T) {
 	bbox := CalculateBBox([]Coordinate{{1, 2}, {3, 4}, {5, 6}})
-	if bbox.mincoord.lat != 1 || bbox.mincoord.lon != 2 {
-		t.Error("Excepted {1,2}, found", bbox.mincoord)
+	if !reflect.DeepEqual(bbox.min, Coordinate{1, 2}) {
+		t.Error("Excepted {1,2}, found", bbox.min)
 	}
-	if bbox.maxcoord.lat != 5 || bbox.maxcoord.lon != 6 {
-		t.Error("Excepted {5,6}, found", bbox.maxcoord)
+	if !reflect.DeepEqual(bbox.max, Coordinate{5, 6}) {
+		t.Error("Excepted {5,6}, found", bbox.max)
 	}
 }
