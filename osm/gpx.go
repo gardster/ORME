@@ -2,33 +2,58 @@ package osm
 
 import (
 	"encoding/xml"
-	"fmt"
 	"github.com/gardster/ORME/geom"
 	"time"
 )
 
-type trk struct {
-	XMLName xml.Name `xml:"trkpt"`
-	Lat     float64  `xml:"lat,attr"`
-	Lon     float64  `xml:"lon,attr"`
-	Time    string   `xml:"time"`
+type gpx struct {
+	XMLName xml.Name `xml:"gpx"`
+	Tracks  []Trk    `xml:"trk"`
 }
 
-func ParseXML(str []byte) geom.Coordinate {
-	var t trk
+type Trk struct {
+	//XMLName xml.Name `xml:"trk"`
+	Segs []TrkSeg `xml:"trkseg"`
+}
+
+type TrkSeg struct {
+	Points []Trkpt `xml:"trkpt"`
+}
+
+type Trkpt struct {
+	//XMLName xml.Name `xml:"trkpt"`
+	Lat  float32 `xml:"lat,attr"`
+	Lon  float32 `xml:"lon,attr"`
+	Time string  `xml:"time"`
+}
+
+func ParseXML(str []byte) []geom.Track {
+	var t gpx
+	var result []geom.Track
 	err := xml.Unmarshal(str, &t)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(t.Time)
-	return geom.Coordinate{float32(t.Lat), float32(t.Lon)}
+	for _, track := range t.Tracks {
+		for _, segment := range track.Segs {
+			var tr geom.Track
+			for _, point := range segment.Points {
+				var pt geom.TrackPoint
+				pt.Point = geom.Coordinate{point.Lat, point.Lon}
+				pt.Time = ParseTime(point.Time)
+				tr.Points = append(tr.Points, pt)
+			}
+			result = append(result, tr)
+		}
+	}
+	return result
 }
 
-func ParseTime(timeStr string) int64 {
+func ParseTime(timeStr string) int {
 	layout := time.RFC3339
 	t, err := time.Parse(layout, timeStr)
 	if err != nil {
 		panic(err)
 	}
-	return int64(t.Unix())
+	return int(t.Unix())
 }

@@ -1,15 +1,21 @@
 package osm
 
 import (
-	"github.com/gardster/ORME/geom"
-	"reflect"
+	"io/ioutil"
 	"testing"
 )
 
 func TestXMLParsing(t *testing.T) {
-	result := ParseXML([]byte(`<trkpt lat="51.6626584" lon="0.2244968"><time>2015-07-19T14:53:53Z</time></trkpt>`))
-	if !reflect.DeepEqual(result, geom.Coordinate{51.6626584, 0.2244968}) {
-		t.Error("Coordinates are not match", result)
+	data, _ := ioutil.ReadFile("tracks.gpx")
+	result := ParseXML(data)
+	if len(result) != 2 {
+		t.Error("Can't find 2 tracks in file", len(result))
+	}
+	if len(result[0].Points) != 560 {
+		t.Error("First track contains only", len(result[0].Points), "points")
+	}
+	if len(result[1].Points) != 4440 {
+		t.Error("Second track contains only", len(result[1].Points), "points")
 	}
 }
 
